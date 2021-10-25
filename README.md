@@ -1,2 +1,2 @@
-# React-shopping-cards
+# React Shopping Cards
 React shopping cards
