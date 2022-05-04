@@ -1,73 +1,93 @@
 import React, { Component } from "react";
-import Nav from "./components/Nav";
-import ShoppingCard from "./components/ShoppingCard";
-import Footer from "./components/Footer";
+import Cards from "./components/Cards";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 class App extends Component {
-  tags = [
-    // { name: "First", count: 0, exists: true },
-    // { name: "Second", count: 0, exists: true },
-    { name: "Third", count: 3, exists: false },
-    // { name: "Fourth", count: 0, exists: true },
-    // { name: "Fifth", count: 0, exists: true },
-  ];
-  components = this.tags.map((tag, index) => {
-    if (tag.exists) {
-      return (
-        <ShoppingCard
-          key={index}
-          name={tag.name}
-          exists={tag.exists}
-          count={tag.count}
-        >
-          <h4>- #{tag.name}</h4>
-        </ShoppingCard>
-      );
-    } else {
-      return (
-        <p key={0} className="alert alert-primary m-2">Please add a new tag</p>
-      )
-    }
-  });
+  state = {
+    cards: [
+      { ID: 1, name: "First", count: 7, exists: true },
+      { ID: 2, name: "Second", count: 0, exists: true },
+      { ID: 3, name: "Third", count: 3, exists: false },
+      { ID: 4, name: "Fourth", count: 4, exists: true },
+      { ID: 5, name: "Fifth", count: 0, exists: true },
+    ],
+  };
 
-  addTag = () => {
+  handleDelete = (ID) => {
+    const cards = this.state.cards.filter((tag) => {
+      return tag.ID !== ID;
+    });
 
-    this.tags.push({name: 'Test', count: 0, exists: true});
+    this.setState({
+      cards,
+    });
+  };
 
-  }
+  handleReset = () => {
+    const cards = this.state.cards.map((tag) => {
+      tag.count = 0;
+      return tag;
+    });
+
+    this.setState({
+      cards,
+    });
+  };
+
+  countedCards = () => {
+    const count = this.state.cards.filter((card) => {
+      return card.count !== 0;
+    });
+
+    return count.length;
+  };
+
+  handleIncrease = (card) => {
+    const index = this.state.cards.indexOf(card);
+    const cards = this.state.cards.map((c, i) => {
+      if (index === i) {
+        c.count++;
+      }
+
+      return c;
+    });
+
+    this.setState({
+      cards,
+    });
+  };
+
+  handleDecrease = (card) => {
+    const index = this.state.cards.indexOf(card);
+    const cards = this.state.cards.map((c, i) => {
+      if (index === i && c.count > 0) {
+        c.count--;
+      }
+
+      return c;
+    });
+
+    this.setState({
+      cards,
+    });
+  };
+
+  handleNewCard = () => {
+    console.log("Nothing");
+  };
 
   render() {
     return (
       <React.Fragment>
-        <Nav />
-        <div className="container mt-4 mb-4">
-            <label htmlFor="tagName" className="form-label">Tag name</label>
-            <input type="text" className="form-control" id="tagName" placeholder="..." />
-        </div>
-        <div className="container mt-3 mb-3">
-          <button className="btn btn-primary m-2">Reset</button>
-          <button onClick={this.addTag} className="btn btn-success m-2">Add</button>
-        </div>
-        <div className="container">
-          <hr />
-        </div>
-        <div className="container">
-          <section className="row mt-4 mb-4">
-            {this.components.length === 0 && (
-              <p className="alert alert-primary m-2">Please add a new tag</p>
-            )}
-            {this.components.length ? (
-              this.components
-            ) : (
-              <p className="alert alert-danger m-2">There's No Data</p>
-            )}
-          </section>
-        </div>
-        <div className="container">
-          <hr />
-        </div>
-        <Footer />
+        <Cards
+          cards={this.state.cards}
+          onDecrease={this.handleDecrease}
+          onIncrease={this.handleIncrease}
+          onDelete={this.handleDelete}
+          onReset={this.handleReset}
+          addNewCard={this.handleNewCard}
+          count={this.countedCards}
+        />
       </React.Fragment>
     );
   }
